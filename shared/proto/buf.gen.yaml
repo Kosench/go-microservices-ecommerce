@@ -1,0 +1,38 @@
+# Версия формата конфигурации Buf (v2 - актуальная версия)
+version: v2
+
+# Managed mode - автоматическое управление опциями для proto-файлов
+managed:
+  # Включить managed mode для автоматической настройки go_package и других опций
+  enabled: true
+  
+  # Переопределение стандартных настроек managed mode
+  override:
+    # Настройка префикса для go_package во всех .proto файлах
+    - file_option: go_package_prefix
+      # Базовый путь импорта для сгенерированных Go-пакетов
+      # Buf автоматически добавит структуру директорий (inventory/v1, payment/v1)
+      value: github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto
+
+# Список плагинов для генерации кода
+plugins:
+  # Плагин для генерации базовых Go-структур из proto (messages, enums)
+  - local: protoc-gen-go
+    # Директория вывода сгенерированных файлов (относительно buf.gen.yaml)
+    # ../pkg/proto означает shared/pkg/proto/ от shared/proto/buf.gen.yaml
+    out: ../pkg/proto
+    # Опции для плагина protoc-gen-go
+    opt:
+      # paths=source_relative сохраняет структуру директорий как в исходных .proto
+      # inventory/v1/inventory.proto → pkg/proto/inventory/v1/inventory.pb.go
+      - paths=source_relative
+  
+  # Плагин для генерации gRPC server/client кода (services, stubs)
+  - local: protoc-gen-go-grpc
+    # Та же директория вывода - код ляжет рядом с .pb.go файлами
+    out: ../pkg/proto
+    # Опции для плагина protoc-gen-go-grpc
+    opt:
+      # Аналогично - сохраняем исходную структуру директорий
+      # inventory/v1/inventory.proto → pkg/proto/inventory/v1/inventory_grpc.pb.go
+      - paths=source_relative
