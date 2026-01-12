@@ -3,88 +3,15 @@ syntax = "proto3";
 package inventory.v1;
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 
 option go_package = "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1;inventory_v1";
 
-// Категория детали (тип компонента корабля)
-enum Category {
-  // Неизвестная категория (значение по умолчанию)
-  CATEGORY_UNSPECIFIED  = 0;
-  // Двигатель
-  CATEGORY_ENGINE = 1;
-  // Топливо
-  CATEGORY_FUEL = 2;
-  // Иллюминатор
-  CATEGORY_PORTHOLE = 3;
-  // Крыло
-  CATEGORY_WING = 4;
-}
+service InventoryService {
+  // GetPart - получить информацию о детали
+  rpc GetPart(GetPartRequest) returns (GetPartResponse);
 
-// Габариты детали
-message Dimensions {
-  // Длина в метрах
-  double length = 1;
-  // Ширина в метрах
-  double width = 2;
-  // Высота в метрах
-  double height = 3;
-  // Вес в килограммах
-  double weight = 4;
-}
-
-// Информация о производителе
-message Manufacturer {
-  // Название компании
-  string name = 1;
-  // Страна производителя (ISO-код или человекочитаемое название)
-  string country = 2;
-  // Веб‑сайт производителя
-  string website = 3;
-}
-
-// Описание детали на складе
-message Part {
-  // Уникальный идентификатор детали (UUID)
-  string uuid = 1;
-  // Человекочитаемое название
-  string name = 2;
-  // Текстовое описание
-  string description = 3;
-  // Цена в минимальных единицах валюты (например, в копейках)
-  int64 price_cents = 4;
-  // Количество на складе
-  int64 stock_quantity = 5;
-  // Категория детали
-  Category category = 6;
-  // Габариты детали
-  Dimensions dimensions = 7;
-  // Производитель детали
-  Manufacturer manufacturer = 8;
-  // Теги для быстрого поиска
-  repeated string tags = 9;
-  // Произвольные метаданные (гибкое расширяемое хранилище)
-  map<string, google.protobuf.Value> metadata = 10;
-  // Время создания записи
-  google.protobuf.Timestamp created_at = 11;
-  // Время последнего обновления записи
-  google.protobuf.Timestamp updated_at = 12;
-}
-
-// Фильтр для поиска деталей
-// Пустое поле → по этому признаку не фильтруем
-// ИЛИ внутри одного поля, И между разными полями
-message PartsFilter {
-  // Список UUID'ов. Пусто — не фильтруем по UUID
-  repeated string uuids = 1;
-  // Список имён. Пусто — не фильтруем по имени
-  repeated string names = 2;
-  // Список категорий. Пусто — не фильтруем по категории
-  repeated Category categories = 3;
-  // Список стран производителей. Пусто — не фильтруем по стране
-  repeated string manufacturer_countries = 4;
-  // Список тегов. Пусто — не фильтруем по тегам
-  repeated string tags = 5;
+  // ListParts - получить список деталей с возможностью фильтрации
+  rpc ListParts(ListPartsRequest) returns (ListPartsResponse);
 }
 
 // GetPartRequest - получение детали по UUID
@@ -94,7 +21,7 @@ message GetPartRequest {
 
 // GetPartResponse - ответ с информацией о детали
 message GetPartResponse {
-  Part part = 1;
+  Part part =  1;
 }
 
 // ListPartsRequest - запрос на получение списка деталей
@@ -107,11 +34,60 @@ message ListPartsResponse {
   repeated Part parts = 1;
 }
 
-// gRPC‑сервис управления деталями
-service InventoryService {
-  // Возвращает информацию о детали по её UUID
-  rpc GetPart(GetPartRequest) returns (GetPartResponse);
+// Part - информация о деталях
+message Part {
+  string uuid = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int64 stock_quantity = 5;
+  Category category = 6;
+  Dimensions dimensions = 7;
+  Manufacturer manufacturer = 8;
+  repeated string tags = 9;
+  map<string, Value> metadata = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
 
-  // Возвращает список деталей с возможностью фильтрации и пагинации
-  rpc ListParts(ListPartsRequest) returns (ListPartsResponse);
+//Category - Категории
+enum Category {
+  CATEGORY_UNSPECIFIED = 0;   // Неизвестная категория
+  CATEGORY_ENGINE = 1;    // Двигатель
+  CATEGORY_FUEL = 2;      // Топливо
+  CATEGORY_PORTHOLE = 3;  // Иллюминатор
+  CATEGORY_WING = 4;      // Крыло
+}
+// Dimensions - размеры и вес деталией
+message Dimensions {
+  double length	= 1; //	Длина в см
+  double width = 2;    //	Ширина в см
+  double height = 3;   //	Высота в см
+  double weight	= 4; //	Вес в кг
+}
+
+// Manufacturer - производители
+message Manufacturer {
+  string name	= 1;     //	Название
+  string country	= 2; //	Страна производства
+  string website	= 3; //	Сайт производителя
+}
+
+// Value
+message Value {
+  oneof value {
+    string string_value	= 1; //	Строковое значение
+    int64 int64_value	= 2; //	Целое значение
+    double double_value	= 3; //	Дробное значение
+    bool bool_value	= 4;    //	Логическое значение
+  }
+}
+
+// PartsFilter - фильтр поиск деталей
+message PartsFilter {
+  repeated string uuids = 1;                     // Список UUID'ов. Пусто — не фильтруем по UUID
+  repeated string names = 2;                     // Список имён. Пусто — не фильтруем по имени
+  repeated Category categories	= 3;           // Список категорий. Пусто — не фильтруем по категории
+  repeated string manufacturer_countries	= 4;   // Список стран производителей. Пусто — не фильтруем по стране
+  repeated string tags	= 5;                   // Список тегов. Пусто — не фильтруем по тегам
 }

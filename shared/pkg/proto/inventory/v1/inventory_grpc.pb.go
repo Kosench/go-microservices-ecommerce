@@ -26,12 +26,10 @@ const (
 // InventoryServiceClient is the client API for InventoryService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// gRPC‑сервис управления деталями
 type InventoryServiceClient interface {
-	// Возвращает информацию о детали по её UUID
+	// GetPart - получить информацию о детали
 	GetPart(ctx context.Context, in *GetPartRequest, opts ...grpc.CallOption) (*GetPartResponse, error)
-	// Возвращает список деталей с возможностью фильтрации и пагинации
+	// ListParts - получить список деталей с возможностью фильтрации
 	ListParts(ctx context.Context, in *ListPartsRequest, opts ...grpc.CallOption) (*ListPartsResponse, error)
 }
 
@@ -66,12 +64,10 @@ func (c *inventoryServiceClient) ListParts(ctx context.Context, in *ListPartsReq
 // InventoryServiceServer is the server API for InventoryService service.
 // All implementations must embed UnimplementedInventoryServiceServer
 // for forward compatibility.
-//
-// gRPC‑сервис управления деталями
 type InventoryServiceServer interface {
-	// Возвращает информацию о детали по её UUID
+	// GetPart - получить информацию о детали
 	GetPart(context.Context, *GetPartRequest) (*GetPartResponse, error)
-	// Возвращает список деталей с возможностью фильтрации и пагинации
+	// ListParts - получить список деталей с возможностью фильтрации
 	ListParts(context.Context, *ListPartsRequest) (*ListPartsResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
