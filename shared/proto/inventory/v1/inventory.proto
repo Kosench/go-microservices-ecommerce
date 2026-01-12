@@ -87,34 +87,24 @@ message PartsFilter {
   repeated string tags = 5;
 }
 
-// Запрос на получение детали по UUID
+// GetPartRequest - получение детали по UUID
 message GetPartRequest {
-  // UUID искомой детали
   string uuid = 1;
 }
 
-// Ответ с одной деталью
+// GetPartResponse - ответ с информацией о детали
 message GetPartResponse {
-  // Найденная деталь
   Part part = 1;
 }
 
-// Запрос списка деталей
+// ListPartsRequest - запрос на получение списка деталей
 message ListPartsRequest {
-  // Фильтр поиска; если все поля пустые — вернуть все детали
   PartsFilter filter = 1;
-  // Размер страницы (максимальное количество элементов в ответе)
-  int32 page_size = 2;
-  // Токен для продолжения пагинации
-  string page_token = 3;
 }
 
-// Ответ со списком деталей
+// ListPartsResponse - ответ со списком деталей
 message ListPartsResponse {
-  // Найденные детали
   repeated Part parts = 1;
-  // Токен следующей страницы (пустой, если это последняя страница)
-  string next_page_token = 2;
 }
 
 // gRPC‑сервис управления деталями
