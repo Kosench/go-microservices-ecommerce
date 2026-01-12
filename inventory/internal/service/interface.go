@@ -8,8 +8,8 @@ import (
 )
 
 type Service interface {
-	GetPart(ctx context.Context, uuid string) (*inventoryv1.Part, error)
-	ListParts(ctx context.Context, filter *inventoryv1.PartsFilter) ([]*model.Part, error)
+	GetPart(ctx context.Context, uuid string) (*model.Part, error)
+	ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error)
 
 	inventoryv1.UnimplementedInventoryServiceServer
 }
