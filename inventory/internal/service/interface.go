@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/model"
+	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/model"
 	inventoryv1 "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1"
 )
 

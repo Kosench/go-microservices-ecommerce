@@ -5,8 +5,6 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/model"
-	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/converter"
 	repoModel "github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/model"
 )
 
@@ -26,8 +24,8 @@ func NewMemoryInventoryRepository() *memoryInventoryRepository {
 	}
 }
 
-// GetPart принимает uuid, возвращает model.Part
-func (r *memoryInventoryRepository) GetPart(ctx context.Context, uuid string) (*model.Part, error) {
+// GetPart принимает uuid, возвращает repoModel.Part
+func (r *memoryInventoryRepository) GetPart(ctx context.Context, uuid string) (*repoModel.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -37,35 +35,61 @@ func (r *memoryInventoryRepository) GetPart(ctx context.Context, uuid string) (*
 		return nil, ErrNotFound
 	}
 
-	// 2. Конвертировать repoModel.Part → model.Part
-	servicePart := converter.ConvertRepoPartToServicePart(repoPart)
-
-	return servicePart, nil
+	return repoPart, nil
 }
 
-func (r *memoryInventoryRepository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
+func (r *memoryInventoryRepository) ListParts(ctx context.Context, filter *repoModel.PartsFilter) ([]*repoModel.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	// 1. Конвертировать service filter → repo filter
-	repoFilter := converter.ConvertServiceFilterToRepoFilter(filter)
-
-	// 2. Собрать все части из "БД"
+	// 1. Собрать все части из "БД"
 	allRepoParts := make([]*repoModel.Part, 0, len(r.data))
 	for _, repoPart := range r.data {
 		allRepoParts = append(allRepoParts, repoPart)
 	}
 
-	// 3. Фильтрация (работаем с repoModel.Part)
-	filteredRepoParts := r.filterParts(allRepoParts, repoFilter)
+	// 2. Фильтрация (работаем с repoModel.Part)
+	filteredRepoParts := r.filterParts(allRepoParts, filter)
 
-	// 4. Конвертировать []repoModel.Part → []*model.Part
-	serviceParts := make([]*model.Part, len(filteredRepoParts))
-	for i, repoPart := range filteredRepoParts {
-		serviceParts[i] = converter.ConvertRepoPartToServicePart(repoPart)
+	return filteredRepoParts, nil
+}
+
+func (r *memoryInventoryRepository) CreatePart(ctx context.Context, part *repoModel.Part) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Check if part already exists
+	if _, exists := r.data[part.UUID]; exists {
+		return ErrAlreadyExists
 	}
 
-	return serviceParts, nil
+	r.data[part.UUID] = part
+	return nil
+}
+
+func (r *memoryInventoryRepository) UpdatePart(ctx context.Context, part *repoModel.Part) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Check if part exists
+	if _, exists := r.data[part.UUID]; !exists {
+		return ErrNotFound
+	}
+
+	r.data[part.UUID] = part
+	return nil
+}
+
+func (r *memoryInventoryRepository) DeletePart(ctx context.Context, uuid string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if _, exists := r.data[uuid]; !exists {
+		return ErrNotFound
+	}
+
+	delete(r.data, uuid)
+	return nil
 }
 
 // filterParts фильтрует repoModel.Part по repoModel.PartsFilter
@@ -121,7 +145,7 @@ func (r *memoryInventoryRepository) filterParts(parts []*repoModel.Part, filter 
 		result = filtered
 	}
 
-	// Шаг 5: Фильтр по тегам (ИЛИ) - хотя бы один тег совпадает
+	// Шаг 5: Фильтр по тегам (ИЛО) - хотя бы один тег совпадает
 	if len(filter.Tags) > 0 {
 		filtered := make([]*repoModel.Part, 0)
 		for _, part := range result {
