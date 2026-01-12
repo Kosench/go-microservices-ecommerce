@@ -3,15 +3,14 @@ syntax = "proto3";
 package inventory.v1;
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 
-option go_package = "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1;inventoryv1";
+option go_package = "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1;inventory_v1";
 
 // Категория детали (тип компонента корабля)
 enum Category {
   // Неизвестная категория (значение по умолчанию)
-  CATEGORY_UNKNOWN = 0;
+  CATEGORY_UNSPECIFIED  = 0;
   // Двигатель
   CATEGORY_ENGINE = 1;
   // Топливо
