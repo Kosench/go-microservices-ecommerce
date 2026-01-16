@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository"
 	repoModel "github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/model"
 )
 
@@ -18,7 +19,7 @@ type memoryInventoryRepository struct {
 	data map[string]*repoModel.Part
 }
 
-func NewMemoryInventoryRepository() *memoryInventoryRepository {
+func NewMemoryInventoryRepository() repository.InventoryRepository {
 	return &memoryInventoryRepository{
 		data: make(map[string]*repoModel.Part),
 	}
