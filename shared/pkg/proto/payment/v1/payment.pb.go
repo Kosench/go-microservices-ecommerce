@@ -140,10 +140,10 @@ func (x *PayOrderRequest) GetPaymentMethod() PaymentMethod {
 
 // PayOrderResponse возвращает идентификатор транзакции после успешной оплаты.
 type PayOrderResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Transaction   string                 `protobuf:"bytes,1,opt,name=transaction,proto3" json:"transaction,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TransactionUuid string                 `protobuf:"bytes,1,opt,name=transaction_uuid,json=transactionUuid,proto3" json:"transaction_uuid,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PayOrderResponse) Reset() {
@@ -176,9 +176,9 @@ func (*PayOrderResponse) Descriptor() ([]byte, []int) {
 	return file_payment_v1_payment_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PayOrderResponse) GetTransaction() string {
+func (x *PayOrderResponse) GetTransactionUuid() string {
 	if x != nil {
-		return x.Transaction
+		return x.TransactionUuid
 	}
 	return ""
 }
@@ -193,9 +193,9 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\n" +
 	"order_uuid\x18\x01 \x01(\tR\torderUuid\x12\x1b\n" +
 	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12@\n" +
-	"\x0epayment_method\x18\x03 \x01(\x0e2\x19.payment.v1.PaymentMethodR\rpaymentMethod\"4\n" +
-	"\x10PayOrderResponse\x12 \n" +
-	"\vtransaction\x18\x01 \x01(\tR\vtransaction*\xa3\x01\n" +
+	"\x0epayment_method\x18\x03 \x01(\x0e2\x19.payment.v1.PaymentMethodR\rpaymentMethod\"=\n" +
+	"\x10PayOrderResponse\x12)\n" +
+	"\x10transaction_uuid\x18\x01 \x01(\tR\x0ftransactionUuid*\xa3\x01\n" +
 	"\rPaymentMethod\x12\x1e\n" +
 	"\x1aPAYMENT_METHOD_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x16\n" +

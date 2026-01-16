@@ -17,7 +17,7 @@ message PayOrderRequest {
 
 // PayOrderResponse возвращает идентификатор транзакции после успешной оплаты.
 message PayOrderResponse{
-  string transaction = 1;
+  string transaction_uuid = 1;
 }
 
 // PaymentMethod определяет доступные способы оплаты в системе.
