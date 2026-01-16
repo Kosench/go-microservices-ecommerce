@@ -7,13 +7,13 @@ import (
 	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/converter"
 	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/part"
 	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/service"
-	inventoryv1 "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1"
+	inventoryV1 "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type api struct {
-	inventoryv1.UnimplementedInventoryServiceServer
+	inventoryV1.UnimplementedInventoryServiceServer
 
 	invService service.Service
 }
@@ -24,31 +24,31 @@ func NewAPI(invService service.Service) *api {
 	}
 }
 
-func (a *api) GetPart(ctx context.Context, req *inventoryv1.GetPartRequest) (*inventoryv1.GetPartResponse, error) {
+func (a *api) GetPart(ctx context.Context, req *inventoryV1.GetPartRequest) (*inventoryV1.GetPartResponse, error) {
 	part, err := a.invService.GetPart(ctx, req.GetUuid())
 	if err != nil {
 		return nil, mapErrorToGRPCStatus(err)
 	}
 
 	grpcPart := converter.ConvertPartToGRPC(part)
-	return &inventoryv1.GetPartResponse{
+	return &inventoryV1.GetPartResponse{
 		Part: grpcPart,
 	}, nil
 }
 
-func (a *api) ListParts(ctx context.Context, req *inventoryv1.ListPartsRequest) (*inventoryv1.ListPartsResponse, error) {
+func (a *api) ListParts(ctx context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error) {
 	filter := converter.ConvertFilterFromGRPC(req.GetFilter())
 	parts, err := a.invService.ListParts(ctx, filter)
 	if err != nil {
 		return nil, mapErrorToGRPCStatus(err)
 	}
 
-	grpcParts := make([]*inventoryv1.Part, len(parts))
+	grpcParts := make([]*inventoryV1.Part, len(parts))
 	for i, part := range parts {
 		grpcParts[i] = converter.ConvertPartToGRPC(part)
 	}
 
-	return &inventoryv1.ListPartsResponse{
+	return &inventoryV1.ListPartsResponse{
 		Parts: grpcParts,
 	}, nil
 }

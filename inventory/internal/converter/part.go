@@ -3,7 +3,7 @@ package converter
 import (
 	"github.com/Kosench/go-microservices-ecommerce/inventory/internal/model"
 	repoModel "github.com/Kosench/go-microservices-ecommerce/inventory/internal/repository/model"
-	inventoryv1 "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1"
+	inventoryV1 "github.com/Kosench/go-microservices-ecommerce/shared/pkg/proto/inventory/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -123,8 +123,8 @@ func ConvertRepoPartsToModelParts(repoParts []*repoModel.Part) []*model.Part {
 }
 
 // convertPartToGRPC конвертирует внутреннюю модель Part в gRPC модель
-func ConvertPartToGRPC(part *model.Part) *inventoryv1.Part {
-	grpcPart := &inventoryv1.Part{
+func ConvertPartToGRPC(part *model.Part) *inventoryV1.Part {
+	grpcPart := &inventoryV1.Part{
 		Uuid:          part.UUID,
 		Name:          part.Name,
 		Description:   part.Description,
@@ -137,7 +137,7 @@ func ConvertPartToGRPC(part *model.Part) *inventoryv1.Part {
 	}
 
 	if part.Dimensions != nil {
-		grpcPart.Dimensions = &inventoryv1.Dimensions{
+		grpcPart.Dimensions = &inventoryV1.Dimensions{
 			Length: part.Dimensions.Length,
 			Width:  part.Dimensions.Width,
 			Height: part.Dimensions.Height,
@@ -146,7 +146,7 @@ func ConvertPartToGRPC(part *model.Part) *inventoryv1.Part {
 	}
 
 	if part.Manufacturer != nil {
-		grpcPart.Manufacturer = &inventoryv1.Manufacturer{
+		grpcPart.Manufacturer = &inventoryV1.Manufacturer{
 			Name:    part.Manufacturer.Name,
 			Country: part.Manufacturer.Country,
 			Website: part.Manufacturer.Website,
@@ -157,23 +157,23 @@ func ConvertPartToGRPC(part *model.Part) *inventoryv1.Part {
 }
 
 // convertCategoryToGRPC конвертирует внутреннюю категорию в gRPC категорию
-func convertCategoryToGRPC(category model.Category) inventoryv1.Category {
+func convertCategoryToGRPC(category model.Category) inventoryV1.Category {
 	switch category {
 	case model.CategoryEngine:
-		return inventoryv1.Category_CATEGORY_ENGINE
+		return inventoryV1.Category_CATEGORY_ENGINE
 	case model.CategoryFuel:
-		return inventoryv1.Category_CATEGORY_FUEL
+		return inventoryV1.Category_CATEGORY_FUEL
 	case model.CategoryPorthole:
-		return inventoryv1.Category_CATEGORY_PORTHOLE
+		return inventoryV1.Category_CATEGORY_PORTHOLE
 	case model.CategoryWing:
-		return inventoryv1.Category_CATEGORY_WING
+		return inventoryV1.Category_CATEGORY_WING
 	default:
-		return inventoryv1.Category_CATEGORY_UNSPECIFIED
+		return inventoryV1.Category_CATEGORY_UNSPECIFIED
 	}
 }
 
 // ConvertFilterFromGRPC конвертирует gRPC фильтр в модель фильтра
-func ConvertFilterFromGRPC(grpcFilter *inventoryv1.PartsFilter) *model.PartsFilter {
+func ConvertFilterFromGRPC(grpcFilter *inventoryV1.PartsFilter) *model.PartsFilter {
 	if grpcFilter == nil {
 		return &model.PartsFilter{}
 	}
@@ -187,7 +187,7 @@ func ConvertFilterFromGRPC(grpcFilter *inventoryv1.PartsFilter) *model.PartsFilt
 }
 
 // convertGRPCCategoriesToModelCategories конвертирует gRPC категории в модель категории
-func convertGRPCCategoriesToModelCategories(grpcCategories []inventoryv1.Category) []model.Category {
+func convertGRPCCategoriesToModelCategories(grpcCategories []inventoryV1.Category) []model.Category {
 	if grpcCategories == nil {
 		return nil
 	}
@@ -200,15 +200,15 @@ func convertGRPCCategoriesToModelCategories(grpcCategories []inventoryv1.Categor
 }
 
 // convertGRPCCategoryToModelCategory конвертирует gRPC категорию в модель категории
-func convertGRPCCategoryToModelCategory(grpcCategory inventoryv1.Category) model.Category {
+func convertGRPCCategoryToModelCategory(grpcCategory inventoryV1.Category) model.Category {
 	switch grpcCategory {
-	case inventoryv1.Category_CATEGORY_ENGINE:
+	case inventoryV1.Category_CATEGORY_ENGINE:
 		return model.CategoryEngine
-	case inventoryv1.Category_CATEGORY_FUEL:
+	case inventoryV1.Category_CATEGORY_FUEL:
 		return model.CategoryFuel
-	case inventoryv1.Category_CATEGORY_PORTHOLE:
+	case inventoryV1.Category_CATEGORY_PORTHOLE:
 		return model.CategoryPorthole
-	case inventoryv1.Category_CATEGORY_WING:
+	case inventoryV1.Category_CATEGORY_WING:
 		return model.CategoryWing
 	default:
 		return model.CategoryUnknown
