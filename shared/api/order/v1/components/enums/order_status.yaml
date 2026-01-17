@@ -1,0 +1,8 @@
+type: string
+enum:
+  - ASSEMBLED
+  - PENDING_PAYMENT
+  - PAID
+  - CANCELLED
+description: Статус заказа
+example: "status"
